@@ -1,69 +1,51 @@
-// calculator.js
+// Complete Calculator with PIN and Vault Logic
 
-// Calculator Logic
-function add(a, b) {
-    return a + b;
-}
-
-function subtract(a, b) {
-    return a - b;
-}
-
-function multiply(a, b) {
-    return a * b;
-}
-
-function divide(a, b) {
-    if (b === 0) {
-        throw new Error('Cannot divide by zero');
+// Function to perform basic operations
+function calculate(operation, a, b) {
+    switch (operation) {
+        case 'add':
+            return a + b;
+        case 'subtract':
+            return a - b;
+        case 'multiply':
+            return a * b;
+        case 'divide':
+            if (b !== 0) return a / b;
+            else throw new Error('Division by zero!');
+        default:
+            throw new Error('Unknown operation!');
     }
-    return a / b;
 }
 
-// Double Tap Detection
-let lastTapTime = 0;
-function doubleTap(callback) {
-    const currentTime = Date.now();
-    if (currentTime - lastTapTime <= 300) {
-        callback();
+// PIN authentication logic
+const correctPIN = '1234';
+let attempts = 0;
+const maxAttempts = 3;
+
+function authenticate(inputPIN) {
+    if (attempts >= maxAttempts) {
+        return 'Max attempts exceeded. Access denied.';
     }
-    lastTapTime = currentTime;
-}
-
-// PIN Validation
-let correctPIN = '1234';
-function validatePIN(inputPIN) {
-    return inputPIN === correctPIN;
-}
-
-// Lockout Timer
-let isLockedOut = false;
-let lockoutTimer;
-function startLockout() {
-    isLockedOut = true;
-    lockoutTimer = setTimeout(() => {
-        isLockedOut = false;
-    }, 30000); // 30 seconds lockout
-}
-
-// Vault Functions
-let vault = {};
-
-function storeInVault(key, value) {
-    if (isLockedOut) {
-        throw new Error('Vault is locked out');
+    if (inputPIN === correctPIN) {
+        return 'Access granted.';
+    } else {
+        attempts++;
+        return 'Incorrect PIN. Try again.';
     }
-    vault[key] = value;
 }
 
-function retrieveFromVault(key) {
-    if (isLockedOut) {
-        throw new Error('Vault is locked out');
+// Vault logic
+let vault = [];
+
+function addToVault(item) {
+    vault.push(item);
+    return 'Item added to vault.';
+}
+
+function retrieveFromVault(index) {
+    if (index >= 0 && index < vault.length) {
+        return vault[index];
+    } else {
+        throw new Error('Invalid index.');
     }
-    return vault[key];
 }
-
-// Example usage:
-// doubleTap(() => console.log('Double tapped!'));
-// if (validatePIN(userInput)) { /* access granted */ }
-// startLockout();
