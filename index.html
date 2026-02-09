@@ -4,98 +4,107 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Calculator Vault</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            background-color: #f4f4f4;
-        }
-        .container {
-            text-align: center;
-        }
-        input[type="text"] {
-            width: 200px;
-            height: 40px;
-            font-size: 20px;
-            text-align: right;
-            margin-bottom: 20px;
-        }
-        button {
-            width: 50px;
-            height: 50px;
-            font-size: 20px;
-            margin: 5px;
-        }
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="container">
-        <h1>Calculator Vault</h1>
-        <input type="text" id="display" disabled>
-        <br>
-        <button onclick="appendToDisplay('1')">1</button>
-        <button onclick="appendToDisplay('2')">2</button>
-        <button onclick="appendToDisplay('3')">3</button>
-        <button onclick="appendToDisplay('+')">+</button>
-        <br>
-        <button onclick="appendToDisplay('4')">4</button>
-        <button onclick="appendToDisplay('5')">5</button>
-        <button onclick="appendToDisplay('6')">6</button>
-        <button onclick="appendToDisplay('-')">-</button>
-        <br>
-        <button onclick="appendToDisplay('7')">7</button>
-        <button onclick="appendToDisplay('8')">8</button>
-        <button onclick="appendToDisplay('9')">9</button>
-        <button onclick="appendToDisplay('*')">*</button>
-        <br>
-        <button onclick="clearDisplay()">C</button>
-        <button onclick="appendToDisplay('0')">0</button>
-        <button onclick="calculate()">=</button>
-        <button onclick="appendToDisplay('/')">/</button>
+    <div class="header">
+        <h1>This is a Calculator Web App</h1>
+        <div class="links">
+            <a href="privacy-policy.html" target="_blank">Privacy Policy</a>
+            <a href="terms-and-conditions.html" target="_blank">Terms & Conditions</a>
+        </div>
     </div>
 
-    <script>
-        let pinRequired = true;
-        let pin = '1234'; // Example PIN, should be user-defined or set securely.
-        let attempts = 0;
+    <!-- Calculator Section -->
+    <div class="calculator-container" id="calculatorContainer">
+        <div class="calculator">
+            <input type="text" id="display" class="display" readonly>
+            <div class="buttons">
+                <button onclick="appendToDisplay('7')">7</button>
+                <button onclick="appendToDisplay('8')">8</button>
+                <button onclick="appendToDisplay('9')">9</button>
+                <button onclick="appendToDisplay('/')" class="operator">÷</button>
+                
+                <button onclick="appendToDisplay('4')">4</button>
+                <button onclick="appendToDisplay('5')">5</button>
+                <button onclick="appendToDisplay('6')">6</button>
+                <button onclick="appendToDisplay('*')" class="operator">×</button>
+                
+                <button onclick="appendToDisplay('1')">1</button>
+                <button onclick="appendToDisplay('2')">2</button>
+                <button onclick="appendToDisplay('3')">3</button>
+                <button onclick="appendToDisplay('-')" class="operator">−</button>
+                
+                <button onclick="appendToDisplay('0')">0</button>
+                <button onclick="appendToDisplay('.')">.</button>
+                <button onclick="calculate()" class="equals">=</button>
+                <button onclick="appendToDisplay('+')" class="operator">+</button>
+                
+                <button onclick="clearDisplay()" class="clear">C</button>
+            </div>
+        </div>
+    </div>
 
-        function appendToDisplay(value) {
-            const display = document.getElementById('display');
-            if (pinRequired) {
-                if (attempts < 2) {
-                    display.value += value; // Prevent PIN requirement during first tap
-                    attempts++;
-                    setTimeout(() => attempts = 0, 3000); // Reset attempts after 3 seconds
-                } else {
-                    let userPin = prompt("Enter your PIN:");
-                    if (userPin === pin) {
-                        pinRequired = false;
-                        display.value += value; // Allow the display change after successful PIN entry
-                    } else {
-                        alert("Incorrect PIN. Please try again.");
-                        attempts = 0;
-                    }
-                }
-            } else {
-                display.value += value; // Allow appending if PIN is verified
-            }
-        }
+    <!-- PIN Screen (Hidden by default) -->
+    <div class="pin-screen" id="pinScreen" style="display: none;">
+        <div class="pin-container">
+            <h2>Enter PIN</h2>
+            <div class="pin-display">
+                <span id="pinInput"></span>
+            </div>
+            <div class="pin-error" id="pinError"></div>
+            <div class="pin-lockout" id="pinLockout"></div>
+            <div class="pin-buttons">
+                <button onclick="pinButtonClick('1')">1</button>
+                <button onclick="pinButtonClick('2')">2</button>
+                <button onclick="pinButtonClick('3')">3</button>
+                <button onclick="pinButtonClick('4')">4</button>
+                <button onclick="pinButtonClick('5')">5</button>
+                <button onclick="pinButtonClick('6')">6</button>
+                <button onclick="pinButtonClick('7')">7</button>
+                <button onclick="pinButtonClick('8')">8</button>
+                <button onclick="pinButtonClick('9')">9</button>
+                <button onclick="pinButtonClick('0')">0</button>
+                <button onclick="pinClear()">Clear</button>
+                <button onclick="pinSubmit()">Submit</button>
+            </div>
+        </div>
+    </div>
 
-        function clearDisplay() {
-            document.getElementById('display').value = '';
-        }
+    <!-- Vault Section (Hidden by default) -->
+    <div class="vault-container" id="vaultContainer" style="display: none;">
+        <div class="vault-header">
+            <h2>Vault</h2>
+            <button onclick="exitVault()" class="close-vault">Exit Vault</button>
+        </div>
 
-        function calculate() {
-            const display = document.getElementById('display');
-            try {
-                display.value = eval(display.value);
-            } catch {
-                display.value = 'Error';
-            }
-        }
-    </script>
+        <div class="vault-tabs">
+            <button class="tab-button active" onclick="showTab('photos')">Photos</button>
+            <button class="tab-button" onclick="showTab('videos')">Videos</button>
+            <button class="tab-button" onclick="showTab('files')">Files</button>
+            <button class="tab-button" onclick="showTab('recordings')">Recordings</button>
+        </div>
+
+        <div class="vault-content">
+            <div id="photos" class="tab-content active">
+                <h3>Photos</h3>
+                <div id="photosList" class="content-list"></div>
+            </div>
+            <div id="videos" class="tab-content">
+                <h3>Videos</h3>
+                <div id="videosList" class="content-list"></div>
+            </div>
+            <div id="files" class="tab-content">
+                <h3>Files</h3>
+                <div id="filesList" class="content-list"></div>
+            </div>
+            <div id="recordings" class="tab-content">
+                <h3>Recordings</h3>
+                <div id="recordingsList" class="content-list"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
 </body>
 </html>
